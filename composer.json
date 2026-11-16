@@ -1,0 +1,63 @@
+{
+    "name": "alveby/atrium-custom-fields",
+    "description": "Custom fields for any Atrium module, set up in the admin: JSON values plus a typed index for fast filters, facets and sorting",
+    "type": "atrium-module",
+    "license": "MIT",
+    "homepage": "https://github.com/AlveBy/atrium",
+    "support": {
+        "issues": "https://github.com/AlveBy/atrium/issues",
+        "source": "https://github.com/AlveBy/atrium"
+    },
+    "keywords": [
+        "laravel",
+        "admin",
+        "cms",
+        "custom-fields",
+        "facets",
+        "filters",
+        "shop"
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0",
+        "alveby/atrium": "^0.1"
+    },
+    "require-dev": {
+        "alveby/atrium-catalog": "^0.1",
+        "alveby/atrium-brands": "^0.1",
+        "orchestra/testbench": "^11.0",
+        "phpunit/phpunit": "^12.5"
+    },
+    "suggest": {
+        "alveby/atrium-catalog": "The demo shop: its products get five filterable fields"
+    },
+    "autoload": {
+        "psr-4": {
+            "Atrium\\CustomFields\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Atrium\\CustomFields\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "atrium": {
+            "resources": [
+                "Atrium\\CustomFields\\Models\\CustomField"
+            ],
+            "migrations": "database/migrations",
+            "demo": "Atrium\\CustomFields\\Database\\CustomFieldsDemoSeeder"
+        },
+        "laravel": {
+            "providers": [
+                "Atrium\\CustomFields\\CustomFieldsServiceProvider"
+            ]
+        },
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
