@@ -80,7 +80,9 @@ final class SchemaTest extends TestCase
         $this->assertSame($site->id, $this->fields()->site());
         $this->assertGreaterThan(0, $site->id);
 
+        // A mass delete fires no model event: the kept list of sites is dropped by hand.
         Site::query()->delete();
+        $this->app->make(Sites::class)->flush();
         $this->app->forgetInstance(Sites::class);
 
         $this->assertSame(0, $this->fields()->site());
