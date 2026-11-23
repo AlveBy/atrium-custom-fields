@@ -12,14 +12,14 @@ namespace Atrium\CustomFields\Support;
 use Atrium\Admin\Contracts\Administrable;
 use Atrium\Admin\Resources\ResourceRegistry;
 use Atrium\Admin\Tabs\Tab;
-use Atrium\CustomFields\Models\CustomField;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
 
 /**
- * The modules custom fields can be added to, and how a module is named:
+ * The modules custom fields can be added to (the content modules: not logs,
+ * form submissions or the fields screen itself), and how a module is named:
  * a definition keeps the model's morph class (its class name, or its alias
  * in the morph map), the same string Laravel keeps in polymorphic columns.
  */
@@ -37,11 +37,7 @@ final class ModuleList
     {
         $models = [];
 
-        foreach ($this->registry->all() as $model) {
-            if ($model === CustomField::class) {
-                continue;
-            }
-
+        foreach ($this->registry->content() as $model) {
             $models[(new $model)->getMorphClass()] = $model;
         }
 

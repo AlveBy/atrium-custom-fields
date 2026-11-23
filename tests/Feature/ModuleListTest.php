@@ -23,6 +23,7 @@ use Atrium\CustomFields\Tests\Fixtures\Pamphlet;
 use Atrium\CustomFields\Tests\TestCase;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use InvalidArgumentException;
+use ReflectionMethod;
 use ReflectionProperty;
 
 /**
@@ -30,19 +31,27 @@ use ReflectionProperty;
  */
 final class ModuleListTest extends TestCase
 {
-    public function test_every_admin_module_but_the_fields_screen_itself(): void
+    public function test_every_content_module_but_the_fields_screen_and_the_services(): void
     {
         $models = $this->modules()->models();
 
         $this->assertSame([
             Site::class => Site::class,
-            Language::class => Language::class,
             Product::class => Product::class,
             CatalogSection::class => CatalogSection::class,
             Brand::class => Brand::class,
         ], $models);
         $this->assertNotContains(CustomField::class, $models);
+        $this->assertNotContains(Language::class, $models, 'languages are the panel\'s own record, not content');
         $this->assertSame([Brand::class => Brand::class], $this->with(['custom_fields' => CustomField::class, 'brands' => Brand::class])->models(), 'the modules after it too');
+    }
+
+    public function test_the_fields_screen_says_itself_that_it_is_no_content(): void
+    {
+        $method = new ReflectionMethod(CustomField::class, 'isContentModule');
+
+        $this->assertTrue($method->isPublic(), 'the panel asks it from outside the model');
+        $this->assertFalse($method->invoke(null));
     }
 
     public function test_a_module_is_keyed_by_its_morph_alias(): void
@@ -63,7 +72,6 @@ final class ModuleListTest extends TestCase
         $this->assertSame([
             Brand::class => 'Brands',
             CatalogSection::class => 'Catalog sections',
-            Language::class => 'Languages',
             Product::class => 'Products',
             Site::class => 'Sites',
         ], $this->modules()->options());

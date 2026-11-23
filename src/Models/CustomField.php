@@ -218,6 +218,12 @@ class CustomField extends Model implements Administrable
         return __('atrium-custom-fields::custom-fields.create');
     }
 
+    /** Service records, not content: no custom fields, no link target. */
+    public static function isContentModule(): bool
+    {
+        return false;
+    }
+
     public static function getAdminRoutePrefix(): string
     {
         return 'custom_fields';
