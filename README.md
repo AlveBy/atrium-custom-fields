@@ -9,7 +9,7 @@ composer require alveby/atrium-custom-fields
 php artisan atrium:module:install alveby/atrium-custom-fields
 ```
 
-Every module's list gets a **Fields** button. A field has a type (line, text, integer, decimal, yes/no, date, list, multiple choice, link to a record, file, image), a name and a hint in every content language, a tab, and the flags required, show in the list, filterable, sortable, searchable, translatable and per site. The first field of a module adds a JSON column `custom` to its table.
+Every module's list gets a **Fields** button. A field has a type (line, text, integer, decimal, yes/no, date, list, multiple choice, link to a record, file, image), a name and a hint in every content language, a tab (one of the form's or one you add with the **Tabs** button), and the flags required, show in the list, filterable, sortable, searchable, translatable and per site. The first field of a module adds a JSON column `custom` to its table.
 
 With `--demo` the catalog's demo products get five filterable fields (weight, battery life, waterproof, connectivity, warranty) in the shop's main language, in pounds for English and kilograms for every other language.
 

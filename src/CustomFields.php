@@ -14,6 +14,7 @@ use Atrium\Admin\Support\Sites;
 use Atrium\CustomFields\Index\Indexer;
 use Atrium\CustomFields\Jobs\ReindexField;
 use Atrium\CustomFields\Models\CustomField;
+use Atrium\CustomFields\Models\CustomFieldTab;
 use Atrium\CustomFields\Support\ModuleList;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
@@ -42,7 +43,12 @@ final class CustomFields
     /** @var array<string,array<int,CustomField>>|null morph class => fields */
     private ?array $definitions = null;
 
+    /** @var array<string,array<int,CustomFieldTab>>|null morph class => tabs */
+    private ?array $tabDefinitions = null;
+
     private ?bool $installed = null;
+
+    private ?bool $tabsInstalled = null;
 
     public function __construct(private readonly ModuleList $modules) {}
 
@@ -112,10 +118,44 @@ final class CustomFields
         return $this->all($model) !== [];
     }
 
+    /**
+     * Every tab the module's form got from an administrator, whatever site
+     * it is limited to.
+     *
+     * @return array<int,CustomFieldTab>
+     */
+    public function allTabs(Model|string $model): array
+    {
+        $this->tabsInstalled ??= Schema::hasTable('custom_field_tabs');
+
+        if (! $this->tabsInstalled) {
+            return [];
+        }
+
+        $this->tabDefinitions ??= CustomFieldTab::query()->orderBy('sort')->orderBy('id')->get()->groupBy('module')
+            ->map(static fn ($tabs): array => $tabs->all())->all();
+
+        return $this->tabDefinitions[$this->modules->morphOf($model)] ?? [];
+    }
+
+    /**
+     * The module's added tabs on the current site, in their order.
+     *
+     * @return array<int,CustomFieldTab>
+     */
+    public function tabs(Model|string $model): array
+    {
+        $site = $this->site();
+
+        return array_values(array_filter($this->allTabs($model), static fn (CustomFieldTab $tab): bool => $tab->site_id === null || $tab->site_id === $site));
+    }
+
     public function flush(): void
     {
         $this->definitions = null;
+        $this->tabDefinitions = null;
         $this->installed = null;
+        $this->tabsInstalled = null;
     }
 
     public function isInstalled(): bool

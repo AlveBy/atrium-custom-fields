@@ -309,6 +309,10 @@ final class ExtensionTest extends TestCase
             'name' => 'custom-fields',
             'label' => __('atrium-custom-fields::custom-fields.button', ['count' => 2]),
             'href' => route('admin.custom_fields.index', ['module' => (new Product)->getMorphClass()]),
+        ], [
+            'name' => 'custom-field-tabs',
+            'label' => __('atrium-custom-fields::custom-fields.tabs.button', ['count' => 0]),
+            'href' => route('admin.custom_field_tabs.index', ['module' => (new Product)->getMorphClass()]),
         ]], $this->extension()->links(Product::class));
         $this->assertStringContainsString('2', $this->extension()->links(Product::class)[0]['label']);
 

@@ -48,7 +48,7 @@ return [
         'code' => 'Lotin harflari, raqamlar va _, birinchisi harf: maydonning API, filtrlar va shablonlardagi nomi.',
         'options' => 'Har qatorda bitta variant: qiymat = Yorliq, yoki faqat yorliq.',
         'link_module' => 'Havola uchun: yozuvlarini ko\'rsatadigan modul.',
-        'tab' => 'Modul shaklining yorlig\'i; bunday yorliq bo\'lmasa, maydon birinchisiga tushadi.',
+        'tab' => 'Modul shaklining yorligʻi, oʻziniki yoki «Yorliqlar»da qoʻshilgan; bunday yorliq boʻlmasa, maydon birinchisiga tushadi.',
         'filterable' => 'Do\'kon panelining filtrlari va hisoblagichlari: qiymatlar tezkor indeksga ko\'chiriladi.',
         'sortable' => 'Ro\'yxat va API shu bo\'yicha saralanadi.',
         'searchable' => 'Ro\'yxatdagi qidiruv bu yerga ham qaraydi.',
@@ -67,5 +67,18 @@ return [
         'options' => 'Variantlarni har qatorga bittadan yozing.',
         'link_module' => 'Havola olib boradigan modulni tanlang.',
         'promoted' => 'Maydon :column ustunida: barcha tillar va saytlar uchun bitta qiymat.',
+    ],
+    'tabs' => [
+        'module' => 'Oʻz yorliqlari',
+        'create' => 'Yorliq qoʻshish',
+        'button' => 'Yorliqlar (:count)',
+        'hints' => [
+            'code' => 'Lotin harflari, raqamlar va _, harfdan boshlanadi. Maydon oʻz yorligʻini shu kod bilan nomlaydi.',
+            'sort' => 'Yorliqning shakl yorliqlari orasidagi oʻrni: son qanchalik kichik boʻlsa, boshiga shunchalik yaqin. Modulning oʻz yorliqlari 0, 10, 20 … deb raqamlangan; yangisi oxirgi boʻladi (500).',
+            'site' => 'Yorliqni faqat bitta saytda koʻrsatish.',
+        ],
+        'errors' => [
+            'code_taken' => 'Modul shaklida bunday kodli yorliq allaqachon bor.',
+        ],
     ],
 ];

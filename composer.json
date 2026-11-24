@@ -44,7 +44,8 @@
     "extra": {
         "atrium": {
             "resources": [
-                "Atrium\\CustomFields\\Models\\CustomField"
+                "Atrium\\CustomFields\\Models\\CustomField",
+                "Atrium\\CustomFields\\Models\\CustomFieldTab"
             ],
             "migrations": "database/migrations",
             "demo": "Atrium\\CustomFields\\Database\\CustomFieldsDemoSeeder"

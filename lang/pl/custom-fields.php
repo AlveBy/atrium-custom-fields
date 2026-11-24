@@ -48,7 +48,7 @@ return [
         'code' => 'Litery łacińskie, cyfry i _, na początku litera: nazwa pola w API, filtrach i szablonach.',
         'options' => 'Jedna opcja w wierszu: wartość = Etykieta, albo sama etykieta.',
         'link_module' => 'Dla powiązania: moduł, którego rekordy wskazuje.',
-        'tab' => 'Zakładka formularza modułu; jeśli jej nie ma, pole trafi na pierwszą.',
+        'tab' => 'Zakładka formularza modułu, własna lub dodana w „Zakładkach”; jeśli jej nie ma, pole trafi na pierwszą.',
         'filterable' => 'Filtry i liczniki panelu sklepu: wartości są kopiowane do szybkiego indeksu.',
         'sortable' => 'Listę i API można po nim sortować.',
         'searchable' => 'Wyszukiwanie na liście zagląda też tutaj.',
@@ -67,5 +67,18 @@ return [
         'options' => 'Podaj opcje, po jednej w wierszu.',
         'link_module' => 'Wybierz moduł, na który wskazuje powiązanie.',
         'promoted' => 'Pole leży w kolumnie :column: jedna wartość dla wszystkich języków i witryn.',
+    ],
+    'tabs' => [
+        'module' => 'Własne zakładki',
+        'create' => 'Dodaj zakładkę',
+        'button' => 'Zakładki (:count)',
+        'hints' => [
+            'code' => 'Litery łacińskie, cyfry i _, zaczynając od litery. Pole wskazuje swoją zakładkę tym kodem.',
+            'sort' => 'Miejsce zakładki wśród zakładek formularza: im mniejsza liczba, tym bliżej początku. Zakładki samego modułu są numerowane 0, 10, 20 …; nowa trafia na koniec (500).',
+            'site' => 'Pokaż zakładkę tylko na jednej stronie.',
+        ],
+        'errors' => [
+            'code_taken' => 'Formularz modułu ma już zakładkę o tym kodzie.',
+        ],
     ],
 ];

@@ -48,7 +48,7 @@ return [
         'code' => 'Lettres latines, chiffres et _, en commençant par une lettre : le nom du champ dans l\'API, les filtres et les gabarits.',
         'options' => 'Une option par ligne : valeur = Libellé, ou seulement le libellé.',
         'link_module' => 'Pour un lien : le module dont il désigne les enregistrements.',
-        'tab' => 'L\'onglet du formulaire du module ; s\'il n\'existe pas, le champ va sur le premier.',
+        'tab' => 'L\'onglet du formulaire du module, le sien ou un ajouté sous « Onglets » ; s\'il n\'existe pas, le champ va sur le premier.',
         'filterable' => 'Filtres et compteurs d\'un panneau de boutique : les valeurs sont copiées dans un index rapide.',
         'sortable' => 'La liste et l\'API peuvent être triées par ce champ.',
         'searchable' => 'La recherche de la liste y regarde aussi.',
@@ -67,5 +67,18 @@ return [
         'options' => 'Indiquez les options, une par ligne.',
         'link_module' => 'Choisissez le module vers lequel pointe le lien.',
         'promoted' => 'Le champ est dans la colonne :column : une valeur pour toutes les langues et tous les sites.',
+    ],
+    'tabs' => [
+        'module' => 'Onglets personnalisés',
+        'create' => 'Ajouter un onglet',
+        'button' => 'Onglets (:count)',
+        'hints' => [
+            'code' => 'Lettres latines, chiffres et _, en commençant par une lettre. Un champ désigne son onglet par ce code.',
+            'sort' => 'La place de l\'onglet parmi ceux du formulaire : plus le nombre est petit, plus il est proche du début. Les onglets du module sont numérotés 0, 10, 20 … ; un nouvel onglet vient en dernier (500).',
+            'site' => 'Afficher l\'onglet sur un seul site.',
+        ],
+        'errors' => [
+            'code_taken' => 'Le formulaire du module a déjà un onglet avec ce code.',
+        ],
     ],
 ];

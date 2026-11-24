@@ -48,7 +48,7 @@ return [
         'code' => 'Latin harfler, rakamlar ve _, harfle başlar: alanın API, filtreler ve şablonlardaki adı.',
         'options' => 'Satır başına bir seçenek: değer = Etiket, ya da yalnızca etiket.',
         'link_module' => 'Bağlantı için: kayıtlarını gösterdiği modül.',
-        'tab' => 'Modül formunun sekmesi; yoksa alan ilk sekmeye gider.',
+        'tab' => 'Modül formunun sekmesi, kendisinin ya da «Sekmeler»de eklenen; yoksa alan ilk sekmeye gider.',
         'filterable' => 'Mağaza panelinin filtreleri ve sayıları: değerler hızlı bir dizine kopyalanır.',
         'sortable' => 'Liste ve API buna göre sıralanabilir.',
         'searchable' => 'Liste araması buraya da bakar.',
@@ -67,5 +67,18 @@ return [
         'options' => 'Seçenekleri satır başına bir tane yazın.',
         'link_module' => 'Bağlantının gösterdiği modülü seçin.',
         'promoted' => 'Alan :column sütununda: tüm diller ve siteler için tek değer.',
+    ],
+    'tabs' => [
+        'module' => 'Özel sekmeler',
+        'create' => 'Sekme ekle',
+        'button' => 'Sekmeler (:count)',
+        'hints' => [
+            'code' => 'Latin harfler, rakamlar ve _; bir harfle başlamalı. Alan sekmesini bu kodla belirtir.',
+            'sort' => 'Sekmenin formdaki sekmeler arasındaki yeri: sayı küçüldükçe başa yaklaşır. Modülün kendi sekmeleri 0, 10, 20 … diye numaralanır; yeni sekme en sona gelir (500).',
+            'site' => 'Sekmeyi yalnızca bir sitede göster.',
+        ],
+        'errors' => [
+            'code_taken' => 'Modülün formunda bu kodlu bir sekme zaten var.',
+        ],
     ],
 ];

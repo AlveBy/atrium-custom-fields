@@ -48,7 +48,7 @@ return [
         'code' => 'Letras latinas, dígitos e _, começando com letra: o nome do campo na API, nos filtros e nos templates.',
         'options' => 'Uma opção por linha: valor = Rótulo, ou só o rótulo.',
         'link_module' => 'Para um vínculo: o módulo cujos registros ele aponta.',
-        'tab' => 'A aba do formulário do módulo; se não existir, o campo vai para a primeira.',
+        'tab' => 'A aba do formulário do módulo, própria ou adicionada em «Abas»; se não existir, o campo vai para a primeira.',
         'filterable' => 'Filtros e contagens de um painel de loja: os valores são copiados para um índice rápido.',
         'sortable' => 'A lista e a API podem ser ordenadas por ele.',
         'searchable' => 'A busca da lista também olha aqui.',
@@ -67,5 +67,18 @@ return [
         'options' => 'Informe as opções, uma por linha.',
         'link_module' => 'Escolha o módulo para o qual o vínculo aponta.',
         'promoted' => 'O campo está na coluna :column: um valor para todos os idiomas e sites.',
+    ],
+    'tabs' => [
+        'module' => 'Abas próprias',
+        'create' => 'Adicionar uma aba',
+        'button' => 'Abas (:count)',
+        'hints' => [
+            'code' => 'Letras latinas, dígitos e _, começando por uma letra. O campo indica sua aba por este código.',
+            'sort' => 'O lugar da aba entre as do formulário: quanto menor o número, mais perto do início. As abas do módulo são numeradas 0, 10, 20 …; uma nova fica por último (500).',
+            'site' => 'Mostrar a aba em um site apenas.',
+        ],
+        'errors' => [
+            'code_taken' => 'O formulário do módulo já tem uma aba com este código.',
+        ],
     ],
 ];

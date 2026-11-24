@@ -48,7 +48,7 @@ return [
         'code' => 'Latin letters, digits and _, starting with a letter: the name of the field in the API, filters and templates.',
         'options' => 'One option per line: value = Label, or just the label.',
         'link_module' => 'For a link: the module whose records it points to.',
-        'tab' => 'The tab of the module\'s form; if the form has no such tab, the field goes to the first one.',
+        'tab' => 'The tab of the module\'s form, its own or one added under Tabs; if the form has no such tab, the field goes to the first one.',
         'filterable' => 'Filters and facet counts of a shop panel: the values are copied into a fast index.',
         'sortable' => 'The list and the API can be sorted by it.',
         'searchable' => 'The list search looks into it.',
@@ -67,5 +67,18 @@ return [
         'options' => 'List the options, one per line.',
         'link_module' => 'Choose the module the link points to.',
         'promoted' => 'The field lives in the column :column: one value for every language and site.',
+    ],
+    'tabs' => [
+        'module' => 'Custom tabs',
+        'create' => 'Add a tab',
+        'button' => 'Tabs (:count)',
+        'hints' => [
+            'code' => 'Latin letters, digits and _, starting with a letter. A field names its tab by this code.',
+            'sort' => 'Where the tab stands among the form\'s tabs, the smaller the nearer the start. The module\'s own tabs are numbered 0, 10, 20 …; a new tab is last (500).',
+            'site' => 'Show the tab on one site only.',
+        ],
+        'errors' => [
+            'code_taken' => 'The module\'s form has a tab with this code already.',
+        ],
     ],
 ];

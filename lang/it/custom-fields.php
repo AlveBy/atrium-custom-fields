@@ -48,7 +48,7 @@ return [
         'code' => 'Lettere latine, cifre e _, iniziando con una lettera: il nome del campo nell\'API, nei filtri e nei template.',
         'options' => 'Un\'opzione per riga: valore = Etichetta, o solo l\'etichetta.',
         'link_module' => 'Per un collegamento: il modulo ai cui record punta.',
-        'tab' => 'La scheda del modulo; se manca, il campo va sulla prima.',
+        'tab' => 'La scheda del modulo, propria o aggiunta sotto «Schede»; se manca, il campo va sulla prima.',
         'filterable' => 'Filtri e conteggi di un pannello negozio: i valori vengono copiati in un indice veloce.',
         'sortable' => 'Elenco e API si possono ordinare per questo campo.',
         'searchable' => 'La ricerca dell\'elenco guarda anche qui.',
@@ -67,5 +67,18 @@ return [
         'options' => 'Indica le opzioni, una per riga.',
         'link_module' => 'Scegli il modulo a cui punta il collegamento.',
         'promoted' => 'Il campo è nella colonna :column: un valore per tutte le lingue e i siti.',
+    ],
+    'tabs' => [
+        'module' => 'Schede proprie',
+        'create' => 'Aggiungi una scheda',
+        'button' => 'Schede (:count)',
+        'hints' => [
+            'code' => 'Lettere latine, cifre e _, a partire da una lettera. Il campo indica la sua scheda con questo codice.',
+            'sort' => 'Il posto della scheda tra quelle del modulo: più piccolo è il numero, più vicina all’inizio. Le schede del modulo sono numerate 0, 10, 20 …; una nuova è l’ultima (500).',
+            'site' => 'Mostra la scheda su un solo sito.',
+        ],
+        'errors' => [
+            'code_taken' => 'Il modulo ha già una scheda con questo codice.',
+        ],
     ],
 ];

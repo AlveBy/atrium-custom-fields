@@ -28,9 +28,11 @@ use Atrium\Admin\Fields\SelectField;
 use Atrium\Admin\Fields\TextareaField;
 use Atrium\Admin\Fields\TextField;
 use Atrium\Admin\Models\AdminUser;
+use Atrium\Admin\Tabs\Tab;
 use Atrium\CustomFields\CustomFields;
 use Atrium\CustomFields\FieldType;
 use Atrium\CustomFields\Models\CustomField;
+use Atrium\CustomFields\Models\CustomFieldTab;
 use Atrium\CustomFields\Query\CustomQuery;
 use Atrium\CustomFields\Support\ModuleList;
 use Illuminate\Database\Eloquent\Builder;
@@ -53,6 +55,7 @@ final class CustomFieldsExtension
         $self = static fn (): self => app(self::class);
 
         Hook::filter('atrium.module.fields', static fn (array $fields, string $model): array => [...$fields, ...$self()->fields($model)]);
+        Hook::filter('atrium.module.tabs', static fn (array $tabs, string $model): array => $self()->tabs($tabs, $model));
         Hook::filter('atrium.module.columns', static fn (array $columns, string $model): array => [...$columns, ...$self()->columns($model)]);
         Hook::filter('atrium.module.translatable', static fn (array $names, string $model): array => [...$names, ...$self()->translatable($model)]);
         Hook::filter('atrium.module.links', static fn (array $links, string $model): array => [...$links, ...$self()->links($model)]);
@@ -65,16 +68,18 @@ final class CustomFieldsExtension
 
     public function fields(string $model): array
     {
-        if ($model === CustomField::class) {
+        if ($this->isOwn($model)) {
             return [];
         }
 
         $definitions = $this->fields->fields($model);
-        $tabs = array_keys($this->modules->tabsOf($model));
+        $own = array_keys($this->modules->tabsOf($model));
+        $tabs = [...$own, ...array_map(static fn (CustomFieldTab $tab): string => $tab->code, $this->fields->tabs($model))];
 
-        return array_map(function (CustomField $definition) use ($tabs): Field {
-            // A tab the form does not have would hide the field: the first one instead.
-            $tab = $tabs === [] || in_array($definition->tab, $tabs, true) ? $definition->tab : $tabs[0];
+        return array_map(function (CustomField $definition) use ($own, $tabs): Field {
+            // A tab the form does not have (a deleted one, one of another site)
+            // would hide the field: the module's first tab instead.
+            $tab = $tabs === [] || in_array($definition->tab, $tabs, true) ? $definition->tab : ($own[0] ?? CustomFieldTab::DEFAULT);
 
             $field = $this->formField($definition)
                 ->label($definition->labelText())
@@ -90,9 +95,46 @@ final class CustomFieldsExtension
         }, $definitions);
     }
 
+    /**
+     * The module's form tabs with the added ones, each in its place: by its
+     * sort number against the numbers of the form's tabs. A form whose tabs
+     * have no numbers of their own gets 0, 10, 20 … in their order.
+     *
+     * @param  array<int,Tab|array<string,mixed>>  $tabs
+     * @return array<int,Tab|array<string,mixed>>
+     */
+    public function tabs(array $tabs, string $model): array
+    {
+        $added = $this->isOwn($model) ? [] : $this->fields->tabs($model);
+
+        if ($added === []) {
+            return $tabs;
+        }
+
+        $orders = array_map(static fn (Tab|array $tab): int => (int) ($tab instanceof Tab ? $tab->getOrder() : ($tab['order'] ?? 0)), $tabs);
+
+        if (count(array_unique($orders)) < count($orders)) {
+            $tabs = array_map(static function (Tab|array $tab, int $position): Tab|array {
+                if ($tab instanceof Tab) {
+                    return $tab->order($position * 10);
+                }
+
+                $tab['order'] = $position * 10;
+
+                return $tab;
+            }, $tabs, array_keys($tabs));
+        }
+
+        foreach ($added as $tab) {
+            $tabs[] = Tab::make($tab->code)->label($tab->labelText())->order($tab->sort);
+        }
+
+        return $tabs;
+    }
+
     public function columns(string $model): array
     {
-        if ($model === CustomField::class) {
+        if ($this->isOwn($model)) {
             return [];
         }
 
@@ -114,7 +156,7 @@ final class CustomFieldsExtension
 
     public function translatable(string $model): array
     {
-        if ($model === CustomField::class) {
+        if ($this->isOwn($model)) {
             return [];
         }
 
@@ -132,7 +174,7 @@ final class CustomFieldsExtension
      */
     public function fill(Model $item, array $data): array
     {
-        if ($item instanceof CustomField) {
+        if ($this->isOwn($item::class)) {
             return $data;
         }
 
@@ -159,7 +201,7 @@ final class CustomFieldsExtension
 
     public function present(Model $item, array $data, string $context = 'form'): array
     {
-        if ($item instanceof CustomField || ! $this->fields->hasFieldsFor($item)) {
+        if ($this->isOwn($item::class) || ! $this->fields->hasFieldsFor($item)) {
             return $data;
         }
 
@@ -219,28 +261,51 @@ final class CustomFieldsExtension
 
     public function links(string $model): array
     {
-        if ($model === CustomField::class || $this->modules->modelClass((new $model)->getMorphClass()) === null) {
+        if ($this->isOwn($model) || $this->modules->modelClass((new $model)->getMorphClass()) === null) {
             return [];
         }
 
         $user = auth()->guard(config('atrium.auth.guard', 'admin'))->user();
 
-        if (! $user instanceof AdminUser || ! app(Permissions::class)->allowsRoute($user, 'admin.custom_fields.index')) {
+        if (! $user instanceof AdminUser) {
             return [];
         }
 
-        return [[
-            'name' => 'custom-fields',
-            'label' => __('atrium-custom-fields::custom-fields.button', ['count' => count($this->fields->all($model))]),
-            'href' => route('admin.custom_fields.index', ['module' => (new $model)->getMorphClass()]),
-        ]];
+        $morph = (new $model)->getMorphClass();
+        $links = [];
+
+        if (app(Permissions::class)->allowsRoute($user, 'admin.custom_fields.index')) {
+            $links[] = [
+                'name' => 'custom-fields',
+                'label' => __('atrium-custom-fields::custom-fields.button', ['count' => count($this->fields->all($model))]),
+                'href' => route('admin.custom_fields.index', ['module' => $morph]),
+            ];
+        }
+
+        if (app(Permissions::class)->allowsRoute($user, 'admin.custom_field_tabs.index')) {
+            $links[] = [
+                'name' => 'custom-field-tabs',
+                'label' => __('atrium-custom-fields::custom-fields.tabs.button', ['count' => count($this->fields->allTabs($model))]),
+                'href' => route('admin.custom_field_tabs.index', ['module' => $morph]),
+            ];
+        }
+
+        return $links;
+    }
+
+    /**
+     * The definitions' own screens are not modules fields can be added to.
+     */
+    private function isOwn(string $model): bool
+    {
+        return $model === CustomField::class || $model === CustomFieldTab::class;
     }
 
     private function find(Builder $query, string $name): ?CustomField
     {
         $model = $query->getModel();
 
-        return $model instanceof CustomField ? null : $this->fields->field($model, $name);
+        return $this->isOwn($model::class) ? null : $this->fields->field($model, $name);
     }
 
     private function sortable(CustomField $field): bool

@@ -12,6 +12,7 @@ namespace Atrium\CustomFields\Support;
 use Atrium\Admin\Contracts\Administrable;
 use Atrium\Admin\Resources\ResourceRegistry;
 use Atrium\Admin\Tabs\Tab;
+use Atrium\CustomFields\Models\CustomFieldTab;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Schema;
@@ -110,7 +111,8 @@ final class ModuleList
     }
 
     /**
-     * Every tab any module's form has, for the definition's "Tab" select.
+     * Every tab any module's form has, and the ones added here, for the
+     * definition's "Tab" select.
      *
      * @return array<string,string> name => label
      */
@@ -122,6 +124,10 @@ final class ModuleList
             foreach ($this->tabsOf($model) as $name => $label) {
                 $tabs[$name] ??= $label === $name ? $name : "{$label} ({$name})";
             }
+        }
+
+        foreach (CustomFieldTab::query()->orderBy('sort')->orderBy('id')->get() as $tab) {
+            $tabs[$tab->code] ??= "{$tab->labelText()} ({$tab->code})";
         }
 
         return $tabs === [] ? ['params' => 'params'] : $tabs;

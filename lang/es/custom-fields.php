@@ -48,7 +48,7 @@ return [
         'code' => 'Letras latinas, cifras y _, empezando por una letra: el nombre del campo en la API, los filtros y las plantillas.',
         'options' => 'Una opción por línea: valor = Etiqueta, o solo la etiqueta.',
         'link_module' => 'Para un enlace: el módulo a cuyos registros apunta.',
-        'tab' => 'La pestaña del formulario del módulo; si no existe, el campo va a la primera.',
+        'tab' => 'La pestaña del formulario del módulo, propia o añadida en «Pestañas»; si no existe, el campo va a la primera.',
         'filterable' => 'Filtros y recuentos de un panel de tienda: los valores se copian a un índice rápido.',
         'sortable' => 'La lista y la API se pueden ordenar por él.',
         'searchable' => 'La búsqueda de la lista también mira aquí.',
@@ -67,5 +67,18 @@ return [
         'options' => 'Indique las opciones, una por línea.',
         'link_module' => 'Elija el módulo al que apunta el enlace.',
         'promoted' => 'El campo está en la columna :column: un valor para todos los idiomas y sitios.',
+    ],
+    'tabs' => [
+        'module' => 'Pestañas propias',
+        'create' => 'Añadir una pestaña',
+        'button' => 'Pestañas (:count)',
+        'hints' => [
+            'code' => 'Letras latinas, dígitos y _, empezando por una letra. El campo nombra su pestaña con este código.',
+            'sort' => 'El lugar de la pestaña entre las del formulario: cuanto menor el número, más cerca del inicio. Las pestañas del módulo van numeradas 0, 10, 20 …; una nueva queda la última (500).',
+            'site' => 'Mostrar la pestaña solo en un sitio.',
+        ],
+        'errors' => [
+            'code_taken' => 'El formulario del módulo ya tiene una pestaña con este código.',
+        ],
     ],
 ];
