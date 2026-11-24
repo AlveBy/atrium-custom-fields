@@ -16,6 +16,7 @@ use Atrium\Brands\Models\Brand;
 use Atrium\Catalog\Models\CatalogSection;
 use Atrium\Catalog\Models\Product;
 use Atrium\CustomFields\Models\CustomField;
+use Atrium\CustomFields\Models\CustomFieldTab;
 use Atrium\CustomFields\Support\ModuleList;
 use Atrium\CustomFields\Tests\Fixtures\Flyer;
 use Atrium\CustomFields\Tests\Fixtures\Leaflet;
@@ -42,6 +43,7 @@ final class ModuleListTest extends TestCase
             Brand::class => Brand::class,
         ], $models);
         $this->assertNotContains(CustomField::class, $models);
+        $this->assertNotContains(CustomFieldTab::class, $models);
         $this->assertNotContains(Language::class, $models, 'languages are the panel\'s own record, not content');
         $this->assertSame([Brand::class => Brand::class], $this->with(['custom_fields' => CustomField::class, 'brands' => Brand::class])->models(), 'the modules after it too');
     }
@@ -49,6 +51,14 @@ final class ModuleListTest extends TestCase
     public function test_the_fields_screen_says_itself_that_it_is_no_content(): void
     {
         $method = new ReflectionMethod(CustomField::class, 'isContentModule');
+
+        $this->assertTrue($method->isPublic(), 'the panel asks it from outside the model');
+        $this->assertFalse($method->invoke(null));
+    }
+
+    public function test_the_tabs_screen_says_itself_that_it_is_no_content(): void
+    {
+        $method = new ReflectionMethod(CustomFieldTab::class, 'isContentModule');
 
         $this->assertTrue($method->isPublic(), 'the panel asks it from outside the model');
         $this->assertFalse($method->invoke(null));

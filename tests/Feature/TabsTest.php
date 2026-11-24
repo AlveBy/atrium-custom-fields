@@ -222,6 +222,84 @@ final class TabsTest extends TestCase
         $this->assertSame(2, CustomFieldTab::query()->count());
     }
 
+    public function test_the_screen_s_form_and_list(): void
+    {
+        $fields = [];
+
+        foreach (CustomFieldTab::getAdministrationFields() as $field) {
+            $fields[$field->getName()] = $field->toArray();
+        }
+
+        $this->assertSame(['module', 'label', 'code', 'sort', 'site_id'], array_keys($fields));
+        $this->assertSame(['Module', 'Name', 'Code', 'Sort', 'Site'], array_column($fields, 'label'));
+        $this->assertSame(500, $fields['sort']['default']);
+        $this->assertSame(__('atrium-custom-fields::custom-fields.tabs.hints.sort'), $fields['sort']['hint']);
+        $this->assertSame(__('atrium-custom-fields::custom-fields.tabs.hints.code'), $fields['code']['hint']);
+        $this->assertSame(__('atrium-custom-fields::custom-fields.tabs.hints.site'), $fields['site_id']['hint']);
+        $this->assertSame('All sites', $fields['site_id']['placeholder']);
+
+        $columns = array_map(static fn ($column): array => $column->toArray(), CustomFieldTab::getAdministrationListColumns());
+        $this->assertSame(['label', 'code', 'module_label', 'sort'], array_column($columns, 'name'));
+        $this->assertSame(['Name', 'Code', 'Module', 'Sort'], array_column($columns, 'label'));
+    }
+
+    public function test_the_number_is_a_number_and_the_list_names_the_module(): void
+    {
+        $tab = $this->tab('delivery', ['module' => (new Product)->getMorphClass(), 'sort' => '15']);
+
+        $this->assertSame(15, $tab->sort);
+        $this->assertSame('Products', $tab->module_label);
+    }
+
+    public function test_the_tabs_are_read_again_after_a_tab_is_saved_or_deleted(): void
+    {
+        $module = (new Product)->getMorphClass();
+        $this->assertSame([], $this->fields()->allTabs(Product::class));
+
+        $tab = $this->tab('delivery', ['module' => $module]);
+        $this->assertSame(['delivery'], array_column($this->fields()->allTabs(Product::class), 'code'), 'saved: no flush by hand');
+
+        $tab->update(['label' => ['en' => 'Shipping']]);
+        $this->assertSame('Shipping', $this->fields()->allTabs(Product::class)[0]->labelText(), 'updated: the same');
+
+        $tab->delete();
+        $this->assertSame([], $this->fields()->allTabs(Product::class), 'deleted: no flush by hand');
+    }
+
+    public function test_the_default_tab_is_taken_in_a_module_without_tabs(): void
+    {
+        $this->actingAs($this->admin(), 'admin');
+
+        $this->post(route('admin.custom_field_tabs.store'), [
+            'module' => (new Brand)->getMorphClass(), 'label' => ['en' => 'Main'], 'code' => 'params', 'sort' => 500,
+        ])->assertSessionHasErrors(['code' => __('atrium-custom-fields::custom-fields.tabs.errors.code_taken')]);
+    }
+
+    public function test_a_code_of_a_tab_of_another_site_is_taken_too(): void
+    {
+        $second = Site::query()->create(['code' => 'second', 'name' => 'Second', 'domains' => ['second.test']]);
+        $this->app->make(Sites::class)->flush();
+        $module = (new Product)->getMorphClass();
+        $this->tab('promo', ['module' => $module, 'site_id' => $second->id]);
+        $this->actingAs($this->admin(), 'admin');
+
+        $this->post(route('admin.custom_field_tabs.store'), [
+            'module' => $module, 'label' => ['en' => 'Promo'], 'code' => 'promo', 'sort' => 500,
+        ])->assertSessionHasErrors(['code' => __('atrium-custom-fields::custom-fields.tabs.errors.code_taken')]);
+        $this->assertSame(1, CustomFieldTab::query()->count());
+    }
+
+    public function test_a_tab_another_module_adds_with_a_number_for_a_name_does_not_break_the_check(): void
+    {
+        Hook::filter('atrium.module.tabs', static fn (array $tabs, string $model): array => $model === Product::class ? [...$tabs, ['name' => 7]] : $tabs);
+        $this->actingAs($this->admin(), 'admin');
+
+        $this->post(route('admin.custom_field_tabs.store'), [
+            'module' => (new Product)->getMorphClass(), 'label' => ['en' => 'Ok'], 'code' => 'ok', 'sort' => 500,
+        ])->assertSessionDoesntHaveErrors();
+        $this->assertSame(1, CustomFieldTab::query()->count());
+    }
+
     public function test_deleting_a_tab_sends_its_fields_to_the_default_tab(): void
     {
         $module = (new Product)->getMorphClass();
