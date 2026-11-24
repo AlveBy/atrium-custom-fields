@@ -114,7 +114,9 @@ final class ExtensionTest extends TestCase
 
         $fields = Hook::apply('atrium.module.fields', ['first', 'second'], Product::class);
         $this->assertSame(['first', 'second'], array_slice($fields, 0, 2));
-        $this->assertCount(3, $fields);
+        // The custom field, and the Template that the theme offers every module with a page.
+        $this->assertCount(4, $fields);
+        $this->assertEqualsCanonicalizing(['motto', 'template'], [$fields[2]->getName(), $fields[3]->getName()]);
 
         $columns = Hook::apply('atrium.module.columns', ['first', 'second'], Product::class);
         $this->assertSame(['first', 'second'], array_slice($columns, 0, 2));
